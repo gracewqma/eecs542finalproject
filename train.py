@@ -9,22 +9,24 @@ import torch.optim as optim
 import matplotlib
 from model import *
 from diff_augs import DiffAugment
+from augmentations import hue, saturation, contrast
+from torch.optim.lr_scheduler import StepLR
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--dataroot', type=str, default='dataset/obama', help='data folder to load from')
-    parser.add_argument('--batch_size', type=int, default=64)
+    parser.add_argument('--batch_size', type=int, default=100)
     parser.add_argument('--image_size', type=int, default=64)
     parser.add_argument('--nc', type=int, default=3, help='number of channels')
     parser.add_argument('--nz', type=int, default=100, help='dimension of latent')
     parser.add_argument('--ngf', default=64, help='size of feature maps in generator')
     parser.add_argument('--ndf', default=64, help='size of feature maps in discriminator')
-    parser.add_argument('--num_epochs', default=50000, help='number of training epochs')
+    parser.add_argument('--num_epochs', default=1000, help='number of training epochs')
     parser.add_argument('--lr', default=0.0002, help='learning rate for optimizers')
     parser.add_argument('--beta1', default=0.5, help='beta1 hyperparam for Adam optimizers')
     parser.add_argument('--ngpu', default=1, help='number of GPUs available, 0 for CPU')
     parser.add_argument('--policy', type=str, default='color,translation,cutout')
-    parser.add_argument('--diff_augs', type=bool, default=True)
+    parser.add_argument('--diff_augs', type=bool, default=False)
 
     args = parser.parse_args()
 
@@ -97,10 +99,16 @@ if __name__ == '__main__':
     G_losses = []
     D_losses = []
     iters = 0
+    schedulerD = StepLR(optimizerD, step_size=1000, gamma=0.7)
+    schedulerG = StepLR(optimizerG, step_size=1000, gamma=0.7)
 
     print("Starting Training Loop...")
     for epoch in range(args.num_epochs):
         for i, data in enumerate(dataloader, 0):
+            schedulerD.step()
+            schedulerG.step()
+
+            
             ############################
             # (1) Update D network: maximize log(D(x)) + log(1 - D(G(z)))
             ###########################
@@ -108,6 +116,9 @@ if __name__ == '__main__':
             netD.zero_grad()
             # Format batch
             real_cpu = data[0].to(device)
+            hue(real_cpu)
+            saturation(real_cpu)
+            contrast(real_cpu)
             b_size = real_cpu.size(0)
             label = torch.full((b_size,), real_label, dtype=torch.float, device=device)
             # Forward pass real batch through D
