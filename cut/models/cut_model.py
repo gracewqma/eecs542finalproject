@@ -161,6 +161,7 @@ class CUTModel(BaseModel):
         fake = self.fake_B.detach()
         # Fake; stop backprop to the generator by detaching fake_B
         pred_fake = self.netD(fake)
+        # augment fake b and real b
         self.loss_D_fake = self.criterionGAN(pred_fake, False).mean()
         # Real
         self.pred_real = self.netD(self.real_B)
@@ -180,7 +181,7 @@ class CUTModel(BaseModel):
             self.loss_G_GAN = self.criterionGAN(pred_fake, True).mean() * self.opt.lambda_GAN
         else:
             self.loss_G_GAN = 0.0
-
+        # apply augments to fake B
         if self.opt.lambda_NCE > 0.0:
             self.loss_NCE = self.calculate_NCE_loss(self.real_A, self.fake_B)
         else:
