@@ -1,0 +1,18 @@
+dataroot = dataset/obama
+
+image_size = 64
+nc = 3
+nz = 100
+ngf = 64
+ndf = 64
+
+batch_size = 100
+num_epochs = 100000
+lr = 0.0002
+beta1 = 0.05
+
+ngpu = 4
+policy = cutout
+diff_augs = True
+log_dir = logs
+exp_name = dcgan_cutout_only

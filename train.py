@@ -14,27 +14,32 @@ from augmentations import *
 from torch.optim.lr_scheduler import StepLR
 from torch.utils.tensorboard import SummaryWriter
 import os
+import configargparse
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
+    parser = configargparse.ArgumentParser()
+    parser.add_argument('--config', is_config_file=True, 
+                        help='config file path')
     parser.add_argument('--dataroot', type=str, default='dataset/obama', help='data folder to load from')
     parser.add_argument('--batch_size', type=int, default=100)
     parser.add_argument('--image_size', type=int, default=64)
     parser.add_argument('--nc', type=int, default=3, help='number of channels')
     parser.add_argument('--nz', type=int, default=100, help='dimension of latent')
-    parser.add_argument('--ngf', default=64, help='size of feature maps in generator')
-    parser.add_argument('--ndf', default=64, help='size of feature maps in discriminator')
-    parser.add_argument('--num_epochs', default=1000, help='number of training epochs')
-    parser.add_argument('--lr', default=0.0002, help='learning rate for optimizers')
-    parser.add_argument('--beta1', default=0.5, help='beta1 hyperparam for Adam optimizers')
-    parser.add_argument('--ngpu', default=1, help='number of GPUs available, 0 for CPU')
-    parser.add_argument('--policy', type=str, default='color,translation,cutout')
+    parser.add_argument('--ngf', default=64, type=int,help='size of feature maps in generator')
+    parser.add_argument('--ndf', default=64, type=int,help='size of feature maps in discriminator')
+    parser.add_argument('--num_epochs', default=1000, type=int,help='number of training epochs')
+    parser.add_argument('--lr', default=0.0002, type=float,help='learning rate for optimizers')
+    parser.add_argument('--beta1', default=0.5, type=float, help='beta1 hyperparam for Adam optimizers')
+    parser.add_argument('--ngpu', default=1, type=int, help='number of GPUs available, 0 for CPU')
+    parser.add_argument('--policy', type=str, default='test_stuff')
     parser.add_argument('--diff_augs', type=bool, default=True)
     parser.add_argument('--log_dir', type=str, default='logs', help='saved logs')
     parser.add_argument('--exp_name', type=str, help='experiment name')
 
+
     args = parser.parse_args()
+    print(args.policy)
 
     image_dataset = dataset.ImageFolder(root=args.dataroot,
                            transform=transforms.Compose([
@@ -79,8 +84,8 @@ if __name__ == '__main__':
 
     # Lists to keep track of progress
 
-    schedulerD = StepLR(optimizerD, step_size=1000, gamma=0.7)
-    schedulerG = StepLR(optimizerG, step_size=1000, gamma=0.7)
+    schedulerD = StepLR(optimizerD, step_size=10000, gamma=0.6)
+    schedulerG = StepLR(optimizerG, step_size=10000, gamma=0.6)
 
     print("Starting Training Loop...")
     for epoch in range(args.num_epochs):

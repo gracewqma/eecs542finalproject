@@ -1,4 +1,5 @@
 import torch
+import torchvision.transforms as transforms
 import torch.nn.functional as F
 import math
 
@@ -122,6 +123,11 @@ def rotation(input):
 
     return input
 
+def blur(input):
+    return transforms.GaussianBlur(5, sigma=(0.1, 2.0))(input)
+
+def sharpen(input, sharpen_amount=2, probability=0.3):
+    return transforms.RandomAdjustSharpness(sharpen_amount, probability)(input)
 
 
 
@@ -170,6 +176,8 @@ def rotation(input):
 
 AUGMENT_FNS = {
     'color': [brightness_orig, saturation, contrast],
-    'translation': [rand_translation, rotation, hflip],
+    'translation': [rand_translation],
     'cutout': [rand_cutout],
+    'gaussian': [blur, sharpen],
+    'affine': [rotation, hflip],
 }
