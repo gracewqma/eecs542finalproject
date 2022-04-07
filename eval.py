@@ -111,12 +111,13 @@ if __name__ == '__main__':
     parser.add_argument('--num_epochs', default=1000, type=int,help='number of training epochs')
     parser.add_argument('--lr', default=0.0002, type=float,help='learning rate for optimizers')
     parser.add_argument('--beta1', default=0.5, type=float, help='beta1 hyperparam for Adam optimizers')
-    parser.add_argument('--ngpu', default=1, type=int, help='number of GPUs available, 0 for CPU')
+    parser.add_argument('--ngpu', default=4, type=int, help='number of GPUs available, 0 for CPU')
 
     args = parser.parse_args()
     device = torch.device("cuda:0" if (torch.cuda.is_available() and args.ngpu > 0) else "cpu")
-
+    
     G_path = os.path.join(args.root_dir, args.exp_name, 'netG_recent.pth')
+    print(G_path)
 
     # load model checkpoint
     netG = Generator(args).to(device)
@@ -126,7 +127,7 @@ if __name__ == '__main__':
     netG.eval()
 
     # generate images
-    num_imgs = 30
+    num_imgs = 200
     gen_imgs = generate_images(netG, args, num_imgs=num_imgs, noise=None)
 
     # save images

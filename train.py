@@ -33,13 +33,13 @@ if __name__ == '__main__':
     parser.add_argument('--beta1', default=0.5, type=float, help='beta1 hyperparam for Adam optimizers')
     parser.add_argument('--ngpu', default=1, type=int, help='number of GPUs available, 0 for CPU')
     parser.add_argument('--policy', type=str, default='test_stuff')
-    parser.add_argument('--diff_augs', type=bool, default=True)
+    parser.add_argument('--diff_augs', type=int, default=1)
     parser.add_argument('--log_dir', type=str, default='logs', help='saved logs')
     parser.add_argument('--exp_name', type=str, help='experiment name')
 
 
     args = parser.parse_args()
-    print(args.policy)
+    print(args.policy, args.diff_augs)
 
     image_dataset = dataset.ImageFolder(root=args.dataroot,
                            transform=transforms.Compose([
@@ -90,8 +90,6 @@ if __name__ == '__main__':
     print("Starting Training Loop...")
     for epoch in range(args.num_epochs):
         for i, data in enumerate(dataloader, 0):
-            schedulerD.step()
-            schedulerG.step()
             # update D
             netD.zero_grad()
             real_cpu = data[0].to(device)
@@ -144,9 +142,11 @@ if __name__ == '__main__':
             D_G_z2 = output.mean().item()
             # Update G
             optimizerG.step()
+            schedulerD.step()
+            schedulerG.step()
 
 
-        if epoch % 10 == 0 or (epoch == args.num_epochs-1):
+        if epoch % 100 == 0 or (epoch == args.num_epochs-1):
             writer.add_scalar("D_reals", D_x, epoch)
             writer.add_scalar("D_fake", D_G_z1, epoch)
             writer.add_scalar("Loss D", errD.item(), epoch)
@@ -157,7 +157,7 @@ if __name__ == '__main__':
                 errD.item(), errG.item(), D_x, D_G_z1, D_G_z2))
             
             # Check how the generator is doing by saving G's output on fixed_noise
-        if (epoch % 1000 == 0) or (epoch == args.num_epochs-1):
+        if (epoch % 10000 == 0) or (epoch == args.num_epochs-1):
             with torch.no_grad():
                 fake = netG(fixed_noise).detach().cpu()
             vutils.save_image(vutils.make_grid(fake[:8], normalize=True), os.path.join(log_path, 'img' + str(epoch) +'.png'))

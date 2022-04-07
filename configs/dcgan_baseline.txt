@@ -1,4 +1,4 @@
-dataroot = dataset/obama
+dataroot = /root/dataset/obama
 
 image_size = 64
 nc = 3
@@ -13,6 +13,6 @@ beta1 = 0.05
 
 ngpu = 4
 policy = none
-diff_augs = False
-log_dir = logs
+diff_augs = 0
+log_dir = /root/logs
 exp_name = dcgan_baseline
