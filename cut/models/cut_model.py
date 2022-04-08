@@ -56,6 +56,7 @@ class CUTModel(BaseModel):
 
     def __init__(self, opt):
         BaseModel.__init__(self, opt)
+        self.policy = "color,affine"
 
         # specify the training losses you want to print out.
         # The training/test scripts will call <BaseModel.get_current_losses>
@@ -161,11 +162,11 @@ class CUTModel(BaseModel):
         """Calculate GAN loss for the discriminator"""
         fake = self.fake_B.detach()
         # Fake; stop backprop to the generator by detaching fake_B
-        pred_fake = self.netD(Augment(fake))
+        pred_fake = self.netD(Augment(fake, policy=self.policy))
         # augment fake b and real b
         self.loss_D_fake = self.criterionGAN(pred_fake, False).mean()
         # Real
-        self.pred_real = self.netD(Augment(self.real_B))
+        self.pred_real = self.netD(Augment(self.real_B, policy=self.policy))
         loss_D_real = self.criterionGAN(self.pred_real, True)
         self.loss_D_real = loss_D_real.mean()
 
@@ -178,7 +179,7 @@ class CUTModel(BaseModel):
         fake = self.fake_B
         # First, G(A) should fake the discriminator
         if self.opt.lambda_GAN > 0.0:
-            pred_fake = self.netD(Augment(fake))
+            pred_fake = self.netD(Augment(fake), policy=self.policy)
             self.loss_G_GAN = self.criterionGAN(pred_fake, True).mean() * self.opt.lambda_GAN
         else:
             self.loss_G_GAN = 0.0
