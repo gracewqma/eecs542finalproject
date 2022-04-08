@@ -3,9 +3,8 @@ import torch
 from .base_model import BaseModel
 from . import networks
 from .patchnce import PatchNCELoss
-import util.util as util\
-from augmentations import *
-
+import util.util as util
+from .aug_class import *
 
 class CUTModel(BaseModel):
     """ This class implements CUT and FastCUT model, described in the paper
@@ -57,7 +56,7 @@ class CUTModel(BaseModel):
     def __init__(self, opt):
         BaseModel.__init__(self, opt)
         self.policy = "color,affine"
-
+        self.aug_class = AugmentClass(self.policy)
         # specify the training losses you want to print out.
         # The training/test scripts will call <BaseModel.get_current_losses>
         self.loss_names = ['G_GAN', 'D_real', 'D_fake', 'G', 'NCE']
@@ -154,6 +153,7 @@ class CUTModel(BaseModel):
                 self.real = torch.flip(self.real, [3])
 
         self.fake = self.netG(self.real)
+        # self.fake = self.netG(self.aug_class.augment(self.real))
         self.fake_B = self.fake[:self.real_A.size(0)]
         if self.opt.nce_idt:
             self.idt_B = self.fake[self.real_A.size(0):]
@@ -162,11 +162,11 @@ class CUTModel(BaseModel):
         """Calculate GAN loss for the discriminator"""
         fake = self.fake_B.detach()
         # Fake; stop backprop to the generator by detaching fake_B
-        pred_fake = self.netD(Augment(fake, policy=self.policy))
+        pred_fake = self.netD(self.aug_class.augment(fake))
         # augment fake b and real b
         self.loss_D_fake = self.criterionGAN(pred_fake, False).mean()
         # Real
-        self.pred_real = self.netD(Augment(self.real_B, policy=self.policy))
+        self.pred_real = self.netD(self.aug_class.augment(self.real_B, use_saved_randoms=True))
         loss_D_real = self.criterionGAN(self.pred_real, True)
         self.loss_D_real = loss_D_real.mean()
 
@@ -179,18 +179,20 @@ class CUTModel(BaseModel):
         fake = self.fake_B
         # First, G(A) should fake the discriminator
         if self.opt.lambda_GAN > 0.0:
-            pred_fake = self.netD(Augment(fake), policy=self.policy)
+            pred_fake = self.netD(self.aug_class.augment(fake))
             self.loss_G_GAN = self.criterionGAN(pred_fake, True).mean() * self.opt.lambda_GAN
         else:
             self.loss_G_GAN = 0.0
         # apply augments to fake B
         if self.opt.lambda_NCE > 0.0:
             self.loss_NCE = self.calculate_NCE_loss(self.real_A, self.fake_B)
+            # self.loss_NCE = self.calculate_NCE_loss(self.aug_class.augment(self.real_A), self.aug_class.augment(self.fake_B, use_saved_randoms=True))
         else:
             self.loss_NCE, self.loss_NCE_bd = 0.0, 0.0
 
         if self.opt.nce_idt and self.opt.lambda_NCE > 0.0:
             self.loss_NCE_Y = self.calculate_NCE_loss(self.real_B, self.idt_B)
+            # self.loss_NCE = self.calculate_NCE_loss(self.aug_class.augment(self.real_B), self.aug_class.augment(self.idt_B, use_saved_randoms=True))
             loss_NCE_both = (self.loss_NCE + self.loss_NCE_Y) * 0.5
         else:
             loss_NCE_both = self.loss_NCE
