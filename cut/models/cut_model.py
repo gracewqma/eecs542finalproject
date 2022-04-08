@@ -146,6 +146,8 @@ class CUTModel(BaseModel):
 
     def forward(self):
         """Run forward pass; called by both functions <optimize_parameters> and <test>."""
+        self.real_A = self.aug_class.augment(self.real_A, use_saved_randoms=False)
+        self.real_B = self.aug_class.augment(self.real_B, use_saved_randoms=True)
         self.real = torch.cat((self.real_A, self.real_B), dim=0) if self.opt.nce_idt and self.opt.isTrain else self.real_A
         if self.opt.flip_equivariance:
             self.flipped_for_equivariance = self.opt.isTrain and (np.random.random() < 0.5)
@@ -162,11 +164,13 @@ class CUTModel(BaseModel):
         """Calculate GAN loss for the discriminator"""
         fake = self.fake_B.detach()
         # Fake; stop backprop to the generator by detaching fake_B
-        pred_fake = self.netD(self.aug_class.augment(fake))
+        pred_fake = self.netD(fake)
+        # pred_fake = self.netD(self.aug_class.augment(fake))
         # augment fake b and real b
         self.loss_D_fake = self.criterionGAN(pred_fake, False).mean()
         # Real
-        self.pred_real = self.netD(self.aug_class.augment(self.real_B, use_saved_randoms=True))
+        self.pred_real = self.netD(self.real_B)
+        # self.pred_real = self.netD(self.aug_class.augment(self.real_B, use_saved_randoms=True))
         loss_D_real = self.criterionGAN(self.pred_real, True)
         self.loss_D_real = loss_D_real.mean()
 
@@ -179,7 +183,8 @@ class CUTModel(BaseModel):
         fake = self.fake_B
         # First, G(A) should fake the discriminator
         if self.opt.lambda_GAN > 0.0:
-            pred_fake = self.netD(self.aug_class.augment(fake))
+            pred_fake = self.netD(fake)
+            # pred_fake = self.netD(self.aug_class.augment(fake))
             self.loss_G_GAN = self.criterionGAN(pred_fake, True).mean() * self.opt.lambda_GAN
         else:
             self.loss_G_GAN = 0.0
