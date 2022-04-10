@@ -31,8 +31,9 @@ from options.test_options import TestOptions
 from data import create_dataset
 from models import create_model
 # from util.visualizer import save_images
-from util import html
+# from util import html
 import util.util as util
+import ntpath
 
 
 if __name__ == '__main__':
@@ -64,18 +65,18 @@ if __name__ == '__main__':
         model.test()           # run inference
         visuals = model.get_current_visuals()  # get image results
         img_path = model.get_image_paths()     # get image paths
-        image_dir = os.path.join(opt.checkpoints_dir, 'images')
+        image_dir = os.path.join(opt.checkpoints_dir, opt.name, 'images')
         if not os.path.exists(image_dir):
             os.makedirs(image_dir)
         
-        short_path = ntpath.basename(image_path[0])
+        short_path = ntpath.basename(img_path[0])
         name = os.path.splitext(short_path)[0]
         for label, im_data in visuals.items():
             im = util.tensor2im(im_data)
             image_name = '%s/%s.png' % (label, name)
-            # os.makedirs(os.path.join(image_dir, label), exist_ok=True)
+            os.makedirs(os.path.join(image_dir, label), exist_ok=True)
             save_path = os.path.join(image_dir, image_name)
-            util.save_image(im, save_path, aspect_ratio=aspect_ratio)
+            util.save_image(im, save_path, aspect_ratio=1.0)
         # if i % 5 == 0:  # save images to an HTML file
     #         print('processing (%04d)-th image... %s' % (i, img_path))
     #     save_images(webpage, visuals, img_path, width=opt.display_winsize)
