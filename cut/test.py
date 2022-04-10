@@ -47,9 +47,9 @@ if __name__ == '__main__':
     train_dataset = create_dataset(util.copyconf(opt, phase="train"))
     model = create_model(opt)      # create a model given opt.model and other options
     # create a webpage for viewing the results
-    web_dir = os.path.join(opt.results_dir, opt.name, '{}_{}'.format(opt.phase, opt.epoch))  # define the website directory
-    print('creating web directory', web_dir)
-    webpage = html.HTML(web_dir, 'Experiment = %s, Phase = %s, Epoch = %s' % (opt.name, opt.phase, opt.epoch))
+    # web_dir = os.path.join(opt.results_dir, opt.name, '{}_{}'.format(opt.phase, opt.epoch))  # define the website directory
+    # print('creating web directory', web_dir)
+    # webpage = html.HTML(web_dir, 'Experiment = %s, Phase = %s, Epoch = %s' % (opt.name, opt.phase, opt.epoch))
 
     for i, data in enumerate(dataset):
         if i == 0:
@@ -64,7 +64,19 @@ if __name__ == '__main__':
         model.test()           # run inference
         visuals = model.get_current_visuals()  # get image results
         img_path = model.get_image_paths()     # get image paths
-        if i % 5 == 0:  # save images to an HTML file
-            print('processing (%04d)-th image... %s' % (i, img_path))
-        save_images(webpage, visuals, img_path, width=opt.display_winsize)
-    webpage.save()  # save the HTML
+        image_dir = os.path.join(opt.checkpoints_dir, 'images')
+        if not os.path.exists(image_dir):
+            os.makedirs(image_dir)
+        
+        short_path = ntpath.basename(image_path[0])
+        name = os.path.splitext(short_path)[0]
+        for label, im_data in visuals.items():
+            im = util.tensor2im(im_data)
+            image_name = '%s/%s.png' % (label, name)
+            # os.makedirs(os.path.join(image_dir, label), exist_ok=True)
+            save_path = os.path.join(image_dir, image_name)
+            util.save_image(im, save_path, aspect_ratio=aspect_ratio)
+        # if i % 5 == 0:  # save images to an HTML file
+    #         print('processing (%04d)-th image... %s' % (i, img_path))
+    #     save_images(webpage, visuals, img_path, width=opt.display_winsize)
+    # webpage.save()  # save the HTML
