@@ -1,6 +1,14 @@
 # EECS 542 Final Project - Extending Differentiable Augmentations to Style Transfer
 ## Description ##
-We implement differentiable augmentations with respect to two networks: DCGAN and CUT-GAN. We implement color, translation, cutout transforms from the authors, as well as our own with hflip, rotation, Gaussian blur, and Gaussian sharpen. Our code uses DCGAN implemented from Pytorch's tutorial, and we build on top of CUT-GANs repository. Both are cited below. To train the model, arguments can be specified in the corresponding config file and the command for DCGAN is:
+We implement differentiable augmentations with respect to two networks: DCGAN and CUT-GAN. We implement color, translation, cutout transforms from the authors, as well as our own with hflip, rotation, Gaussian blur, and Gaussian sharpen. Our code uses DCGAN implemented from Pytorch's tutorial, and we build on top of CUT-GANs repository. Both are cited below.
+
+The Docker image is in the Docker folder and can be built with:
+```
+cd Docker
+Docker build . -t diffaugs
+```
+
+To train the model, arguments can be specified in the corresponding config file and the command for DCGAN is:
 ```
 ./run_train.sh
 ```
