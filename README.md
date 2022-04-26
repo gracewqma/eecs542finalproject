@@ -15,3 +15,13 @@ FID comparisons was ran using **pytorch-FID**
 **cut/models/cut_model.py**: modified CUT-GAN model with our differentiable augmentations. 
 
 **cut/train.py**: training code for CUT-GAN model
+
+
+### Citations ###
+```
+@article{fix,
+  title={fix},
+  author={fix},
+  year={fix}
+}
+'''
