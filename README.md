@@ -4,8 +4,8 @@ We implement differentiable augmentations with respect to two networks: DCGAN an
 
 The Docker image is in the Docker folder and can be built with:
 ```
-cd Docker
-Docker build . -t diffaugs
+cd docker
+docker build . -t diffaugs
 ```
 
 To train the model, arguments can be specified in the corresponding config file and the command for DCGAN is:
