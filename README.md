@@ -33,9 +33,30 @@ FID comparisons was ran using **pytorch-FID**
 
 ### Citations ###
 ```
-@article{fix,
-  title={fix},
-  author={fix},
-  year={fix}
+@article{https://doi.org/10.48550/arxiv.2006.10738,
+  title={Differentiable Augmentation for Data-Efficient GAN Training},
+  author={Zhao, Shengyu and Liu, Zhijian and Lin, Ji and Zhu, Jun-Yan and Han, Song},
+  year={2020}
+}
+
+@article{https://doi.org/10.48550/arxiv.2007.15651,
+  title={Contrastive Learning for Unpaired Image-to-Image Translation},
+  author={Park, Taesung and Efros, Alexei A. and Zhang, Richard and Zhu, Jun-Yan},
+  year={2020}
+}
+
+@article{https://doi.org/10.48550/arxiv.1511.06434,
+  title={Unsupervised Representation Learning with Deep Convolutional Generative Adversarial Networks},
+  author={Radford, Alec and Metz, Luke and Chintala, Soumith},
+  year={2015}
+}
+
+@misc{Seitzer2020FID,
+  author={Maximilian Seitzer},
+  title={{pytorch-fid: FID Score for PyTorch}},
+  month={August},
+  year={2020},
+  note={Version 0.2.1},
+  howpublished={\url{https://github.com/mseitzer/pytorch-fid}},
 }
 ```
