@@ -1,4 +1,18 @@
 # EECS 542 Final Project - Extending Differentiable Augmentations to Style Transfer
+## Description ##
+We implement differentiable augmentations with respect to two networks: DCGAN and CUT-GAN. We implement color, translation, cutout transforms from the authors, as well as our own with hflip, rotation, Gaussian blur, and Gaussian sharpen. Our code uses DCGAN implemented from Pytorch's tutorial, and we build on top of CUT-GANs repository. Both are cited below. To train the model, arguments can be specified in the corresponding config file and the command for DCGAN is:
+```
+./run_train.sh
+```
+and for CUT-GAN, the corresponding script is: 
+```
+./run_cut.sh
+```
+**Note:** Datasets are not included, and can be downloaded from the original paper repositories. 
+
+## CUT-GAN With Differentiable Augment Results ##
+
+<img src="https://github.com/gracewqma/eecs542finalproject/blob/main/translation.png">
 
 ## File Descriptions
 
@@ -24,4 +38,4 @@ FID comparisons was ran using **pytorch-FID**
   author={fix},
   year={fix}
 }
-'''
+```
