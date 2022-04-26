@@ -8,7 +8,7 @@
 
 **train.py**: training code for DCGAN model with augmentations
 
-FID comaprisons was ran using **pytorch-FID**
+FID comparisons was ran using **pytorch-FID**
 
 **cut/models/aug_class.py**: augmentation implementations for CUTGAN, including saving random variables to ensure the same augmentations were applied between calls.
 
