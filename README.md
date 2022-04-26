@@ -16,6 +16,8 @@ and for CUT-GAN, the corresponding script is:
 ```
 ./run_cut.sh
 ```
+Training plots can be visualized with tensorboard where specified in the ```log_dir``` argument.
+
 **Note:** Datasets are not included, and can be downloaded from the original paper repositories. 
 
 ## CUT-GAN With Differentiable Augment Results ##
@@ -29,6 +31,8 @@ and for CUT-GAN, the corresponding script is:
 **model.py**: DCGAN model implementation
 
 **train.py**: training code for DCGAN model with augmentations
+
+**split_datasets.py**: creates the 100-shot training subsample for the dataset.
 
 FID comparisons was ran using **pytorch-FID**
 
