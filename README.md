@@ -1,15 +1,17 @@
 # EECS 542 Final Project - Extending Differentiable Augmentations to Style Transfer
 
-augmentations.py include all of the augmentations that we implemented for DCGAN
+## File Descriptions
 
-model.py is our DCGAN model
+**augmentations.py**: augmentation implementations for DCGAN
 
-train.py is how we trained our DCGAN model with augmentations
+**model.py**: DCGAN model implementation
 
-FID comaprisons was ran using pytorch-FID
+**train.py**: training code for DCGAN model with augmentations
 
-cut/models/aug_class.py was all the augmentation that we implemented for CUTGAN, including saving random variables to ensure the same augmentations were applied between calls.
+FID comaprisons was ran using **pytorch-FID**
 
-cut/models/cut_model.py is our modified CUT-GAN model with our differentiable augmentations. 
+**cut/models/aug_class.py**: augmentation implementations for CUTGAN, including saving random variables to ensure the same augmentations were applied between calls.
 
-cut/train.py is how we trained out CUT-GAN model
+**cut/models/cut_model.py**: modified CUT-GAN model with our differentiable augmentations. 
+
+**cut/train.py**: training code for CUT-GAN model
